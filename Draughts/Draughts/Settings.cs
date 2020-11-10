@@ -12,8 +12,10 @@ namespace Draughts
 {
     public partial class Settings : Form
     {
-        public Settings()
+        Menu parent;
+        public Settings(Menu m)
         {
+            parent = m;
             InitializeComponent();
         }
 
@@ -21,6 +23,15 @@ namespace Draughts
         {
             this.BackgroundImage = Properties.Resources.background;
             this.BackgroundImageLayout = ImageLayout.Stretch;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void Settings_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            parent.Show();
         }
     }
 }

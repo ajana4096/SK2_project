@@ -21,14 +21,14 @@ namespace Draughts
         //Start game
         private void button1_Click(object sender, EventArgs e)
         {
-            Board b = new Board();
+            Board b = new Board(this);
             this.Hide();
             b.Show();            
         }
         //connection to the server
         private void button2_Click(object sender, EventArgs e)
         {
-            Settings s = new Settings();
+            Settings s = new Settings(this);
             this.Hide();
             s.Show();
         }
