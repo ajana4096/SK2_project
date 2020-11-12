@@ -164,7 +164,12 @@ namespace Draughts
                                     highlighted.FlatAppearance.BorderSize = 0;
                                     highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                                     phase = 0;
-                                    state.active_side = 3 - state.active_side;
+                                    result = state.check_if_win();
+                                    if (result == state.active_side)
+                                    {
+
+                                    }
+                                        state.active_side = 3 - state.active_side;                                    
                                     break;
                                 case 2://remove captured pawn and end turn
                                     field.id = highlighted.id;
