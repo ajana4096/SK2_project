@@ -12,6 +12,7 @@ namespace Draughts
 {
     public partial class Menu : Form
     {
+        Options o = new Options();
         public Menu()
         {
             this.BackgroundImage = Properties.Resources.background;
@@ -21,14 +22,14 @@ namespace Draughts
         //Start game
         private void button1_Click(object sender, EventArgs e)
         {
-            Board b = new Board(this);
+            Board b = new Board(this, o);
             this.Hide();
             b.Show();            
         }
         //connection to the server
         private void button2_Click(object sender, EventArgs e)
         {
-            Settings s = new Settings(this);
+            Settings s = new Settings(this, o);
             this.Hide();
             s.Show();
         }

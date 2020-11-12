@@ -58,6 +58,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Options.cs" />
     <Compile Include="Pawns.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -101,6 +102,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black_king.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black_pawn.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white_king.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white_pawn.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
