@@ -86,14 +86,12 @@ namespace Draughts
         public void remove(int x, int y)
         {
             if (board[x, y] % 3 == 1)
-            {
-                player1[board[x, y] / 3].zbij();
+            {                
                 iplayer1--;
             }
             else
             {
                 iplayer2--;
-                player2[board[x, y] / 3].zbij();
             }
             to_kill = string.Format("{0}-{1}", x, y);
             board[x, y] = 0;            

@@ -16,16 +16,7 @@ namespace Draughts
         public Board_situation board;
         public int side;
         public int type;
-        public bool active = true;
-        public abstract int move(int a, int b);
-        public void zbij()
-        {
-            active = false;
-        }
-        public bool get_active()
-        {
-            return active;
-        }
+        public abstract int move(int a, int b);        
         //verifies if there exists a viable jump move for the pawn
         public int jump()
         {
@@ -60,38 +51,6 @@ namespace Draughts
             return 0;
         }
         //finds first possible jump direction
-        public int jump2()
-        {
-            if (x + 2 < 8 && y + 2 < 8)
-            {
-                if (board.get_square(x + 2, y + 2) == 0 && board.get_square(x + 1, y + 1) == 3 - side)
-                {
-                    return 1;
-                }
-            }
-            if (x - 2 > -1 && y + 2 < 8)
-            {
-                if (board.get_square(x - 2, y + 2) == 0 && board.get_square(x - 1, y + 1) == 3 - side)
-                {
-                    return 2;
-                }
-            }
-            if (x + 2 < 8 && y - 2 > -1)
-            {
-                if (board.get_square(x + 2, y - 2) == 0 && board.get_square(x + 1, y - 1) == 3 - side)
-                {
-                    return 3;
-                }
-            }
-            if (x - 2 > -1 && y - 2 > -1)
-            {
-                if (board.get_square(x - 2, y - 2) == 0 && board.get_square(x - 1, y - 1) == 3 - side)
-                {
-                    return 4;
-                }
-            }
-            return 0;
-        }
         public int jump(int a, int b)
         {
             int res = 0;
