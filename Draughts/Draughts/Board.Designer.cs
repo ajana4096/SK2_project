@@ -1,4 +1,7 @@
-﻿namespace Draughts
+﻿using System;
+using System.Windows.Forms;
+
+namespace Draughts
 {
     partial class Board
     {
@@ -34,13 +37,16 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(500, 500);
+            this.ClientSize = new System.Drawing.Size(512, 512);
             this.Name = "Board";
             this.Text = "Board";
             this.Load += new System.EventHandler(this.Board_Load);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Board_closed);
             this.ResumeLayout(false);
 
         }
+
+
 
         #endregion
     }

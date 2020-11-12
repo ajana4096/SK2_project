@@ -9,12 +9,12 @@ namespace Draughts
     class Board_situation
     {
 
-        private List<BasePawn> player1;//list of pawns controlled by player 1
-        private List<BasePawn> player2;//list of pawns controlled by player 2
-        private int[,] board = new int[8, 8];//array of 0's for empty field, numbers equal to 1 modulo 3 for player one pawn, numbers equal to 2 modulo 3 for player two pawn
+        public List<BasePawn> player1;//list of pawns controlled by player 1
+        public List<BasePawn> player2;//list of pawns controlled by player 2
+        public int[,] board = new int[8, 8];//array of 0's for empty field, numbers equal to 1 modulo 3 for player one pawn, numbers equal to 2 modulo 3 for player two pawn
         private int iplayer1;//number of pawns controlled by player 1
         private int iplayer2;//number of pawns controlled by player 1
-
+        public int active_side = 1;
         //get info about status of the given field
         public int get_square(int x, int y)
         {
@@ -109,27 +109,13 @@ namespace Draughts
 
         public void new_game()
         {
-            int numer_pionka = 1;
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)//set empty fields
                 {
                     board[i, j] = 0;
                 }
-            }
-            for (int j = 0; j < 4; j++)
-            {
-                for (int i = j % 2; i < 8; i += 2)
-                {
-                    player1.Add(new Pawn(1, i, j, this));
-                    board[i, j] = numer_pionka;
-                    //to do
-                    player2.Add(new Pawn(-1, 7 - i, 7 - j, this));
-                    board[7 - i, 7 - j] = numer_pionka + 1;
-                    //to do
-                    numer_pionka += 3;
-                }
-            }
+            }            
             iplayer1 = 12;
             iplayer2 = 12;
         }
