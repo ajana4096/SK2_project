@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Draughts
 {
     //base class not representing actual pawn type, but useful to cover any pawn type
-    class BasePawn
+
+    abstract class BasePawn
     {
 
         public int x;
@@ -16,10 +17,7 @@ namespace Draughts
         public int side;
         public int type;
         public bool active = true;
-        public int move(int a, int b)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract int move(int a, int b);
         public void zbij()
         {
             active = false;
@@ -132,10 +130,7 @@ namespace Draughts
             return res;
         }
         //not implemented
-        public BasePawn promotion()
-        {
-            return this;
-        }
+        public abstract BasePawn promotion();
     }
     //starting pawn type 
     class Pawn : BasePawn
@@ -162,7 +157,7 @@ namespace Draughts
         //move: 0 - incorect, 1 - standard correct 2 - jump without possibility of continuation 3 - jump with possibility of continuation
 
         //execute move
-        public new int move(int a, int b)
+        public override int move(int a, int b)
         {
             int res;
             //standard move
@@ -188,7 +183,7 @@ namespace Draughts
             return res;
         }
         //upgrade pawn to the king
-        public new BasePawn promotion()
+        public override BasePawn promotion()
         {
             return new King(side, x, y, board);
         }
@@ -207,7 +202,7 @@ namespace Draughts
             side = _side;
         }
         //execute the move
-        public new int move(int a, int b)
+        public override int move(int a, int b)
         {
             int res = 0;
             if (board.get_square(a, b) != 0)//if target square isn't empty, the move isn't possible
@@ -330,6 +325,9 @@ namespace Draughts
             }
             return res;
         }
-
+        public override BasePawn promotion()
+        {
+            return this;
+        }
     }
 }

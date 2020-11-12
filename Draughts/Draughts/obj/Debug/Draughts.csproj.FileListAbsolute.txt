@@ -9,4 +9,4 @@ C:\Users\Gsue44\Source\Repos\SK2_project\Draughts\Draughts\obj\Debug\Draughts.ex
 C:\Users\Gsue44\Source\Repos\SK2_project\Draughts\Draughts\obj\Debug\Draughts.pdb
 C:\Users\Gsue44\Source\Repos\SK2_project\Draughts\Draughts\obj\Debug\Draughts.Menu.resources
 C:\Users\Gsue44\Source\Repos\SK2_project\Draughts\Draughts\obj\Debug\Draughts.Settings.resources
-C:\Users\Gsue44\Source\Repos\SK2_project\Draughts\Draughts\obj\Debug\Draughts.DraugthsButton.resources
+C:\Users\Gsue44\Source\Repos\SK2_project\Draughts\Draughts\obj\Debug\Draughts.DraughtsButton.resources

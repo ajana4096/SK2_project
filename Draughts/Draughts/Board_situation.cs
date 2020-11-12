@@ -15,6 +15,7 @@ namespace Draughts
         private int iplayer1;//number of pawns controlled by player 1
         private int iplayer2;//number of pawns controlled by player 1
         public int active_side = 1;
+        public string to_kill;
         //get info about status of the given field
         public int get_square(int x, int y)
         {
@@ -55,17 +56,30 @@ namespace Draughts
         //execute a move
         public int move(int x1, int y1, int x2, int y2)
         {
+            int res = 0;
             if (board[x1, y1] == 0 || board[x2, y2] != 0)
             {
                 return 0;//you can't move a pawn that isn't there
             }
             if (board[x1, y1] % 3 == 1)
             {
-                return player1[board[x1, y1] / 3].move(x2, y2);
+                res =  player1[board[x1, y1] / 3].move(x2, y2);
+                if (res > 0)
+                {
+                    board[x2, y2] = board[x1, y1];
+                    board[x1, y1] = 0;
+                }
+                return res;
             }
             else
             {
-                return player2[board[x1, y1] / 3].move(x2, y2);
+                res = player2[board[x1, y1] / 3].move(x2, y2);
+                if (res > 0)
+                {
+                    board[x2, y2] = board[x1, y1];
+                    board[x1, y1] = 0;
+                }
+                return res;
             }
         }
 
@@ -81,8 +95,8 @@ namespace Draughts
                 iplayer2--;
                 player2[board[x, y] / 3].zbij();
             }
-            board[x, y] = 0;
-            //to do
+            to_kill = string.Format("{0}-{1}", x, y);
+            board[x, y] = 0;            
         }
 
         public Board_situation()
