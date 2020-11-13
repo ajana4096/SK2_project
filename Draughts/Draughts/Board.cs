@@ -49,6 +49,7 @@ namespace Draughts
             //to do
             parent.Show();
         }
+        //sets the pawns on the board
         private void Board_setup()
         {
             int pawn_number = 1;
@@ -78,6 +79,7 @@ namespace Draughts
                 this.Controls.Add(Create_pawn(false, 0, 7 - i, 4));
             }
         }
+        //create button for a pawn
         private DraughtsButton Create_pawn(bool king, int id, int x, int y)
         {
             DraughtsButton pawn = new DraughtsButton();
@@ -123,6 +125,7 @@ namespace Draughts
             pawn.FlatAppearance.BorderSize = 0;
             return pawn;
         }
+        //handle first pawn selection, then move from mouseclicks
         void MoveHandler(object sender, EventArgs e)
         {
             int result = 0;
@@ -319,14 +322,17 @@ namespace Draughts
                     break;
             }
         }
-        void MoveHandler(Queue<int> move_template)
+        //handle first pawn selection, then move from move squares list
+        public void MoveHandler(Queue<int> move_template)
         {
             int result = 0;
-            DraughtsButton highlighted = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", move_template.Dequeue(), move_template.Dequeue()), false)[0];
+            string x = move_template.Dequeue().ToString();
+            string y = move_template.Dequeue().ToString();
+            DraughtsButton highlighted = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1}", x, y), false)[0];
             highlighted.FlatStyle = FlatStyle.Flat;
             highlighted.FlatAppearance.BorderColor = Color.DarkGreen;
             highlighted.FlatAppearance.BorderSize = 2;
-            DraughtsButton field = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", move_template.Dequeue(), move_template.Dequeue()), false)[0];
+            DraughtsButton field = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1}", move_template.Dequeue(), move_template.Dequeue()), false)[0];
             if (state.get_square(field.x, field.y) == 0)
             {
                 result = state.move(highlighted.x, highlighted.y, field.x, field.y);
@@ -408,13 +414,14 @@ namespace Draughts
                 }
             }
         }
+        //handle continuation of the move after jump from squares list
         void MoveHandler(Queue<int> move_template, int x, int y)
         {
-            DraughtsButton highlighted = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", x, y), false)[0];
+            DraughtsButton highlighted = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1}", x, y), false)[0];
             highlighted.FlatStyle = FlatStyle.Flat;
             highlighted.FlatAppearance.BorderColor = Color.DarkGreen;
             highlighted.FlatAppearance.BorderSize = 2;
-            DraughtsButton field = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", move_template.Dequeue(), move_template.Dequeue()), false)[0];
+            DraughtsButton field = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1}", move_template.Dequeue(), move_template.Dequeue()), false)[0];
 
             int result = state.move(highlighted.x, highlighted.y, field.x, field.y);
             switch (result)
@@ -486,9 +493,10 @@ namespace Draughts
         void change_active()
         {
             state.active_side = 3 - state.active_side;
-            if (o.singlemode == false)
+            if (o.local == false)//in game via web pass move_list to the server
             {
                 //to do
+                
                 state.active_side = 3 - state.active_side;
             }
         }

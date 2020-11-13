@@ -11,6 +11,6 @@ namespace Draughts
         public string ip_addres;
         public string http_name;
         public string nick;
-        public bool singlemode=true;
+        public bool local=true;
     }
 }

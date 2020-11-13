@@ -25,7 +25,7 @@ namespace Draughts
         {
             this.BackgroundImage = Properties.Resources.background;
             this.BackgroundImageLayout = ImageLayout.Stretch;
-            if (o.singlemode == true)
+            if (o.local == true)
             {
                 this.button1.Text = "Gra lokalnie";
                 this.textBox1.Hide();
@@ -48,9 +48,9 @@ namespace Draughts
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (o.singlemode == false)
+            if (o.local == false)
             {
-                o.singlemode = true;
+                o.local = true;
                 this.button1.Text = "Gra lokalnie";
                 this.textBox1.Hide();
                 this.textBox2.Hide();
@@ -61,7 +61,7 @@ namespace Draughts
             }
             else
             {
-                o.singlemode = false;
+                o.local = false;
                 this.button1.Text = "Gra poprzez sieć";                
                 this.textBox1.Show();
                 this.textBox2.Show();
