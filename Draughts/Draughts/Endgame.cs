@@ -12,14 +12,34 @@ namespace Draughts
 {
     public partial class Endgame : Form
     {
-        public Endgame()
+        Board parent;
+        public Endgame(Board b, bool victory)
         {
+            parent = b;
             InitializeComponent();
+            if (victory)
+            {
+                this.BackColor = Color.Green;
+                this.label1.Text = "Zwycięstwo!\n(Fajnie, nie?)";
+            }
+            else
+            {
+                this.BackColor = Color.Red;
+                this.label1.Text = "Przegrana...\n(Może następnym razem będzie lepiej..?)";
+            }
         }
 
         private void Endgame_FormClosed(object sender, FormClosedEventArgs e)
         {
+            parent.Dispose();
+            parent.parent.Show();
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            parent.parent.Show();
+            parent.Dispose();
+            this.Dispose();
         }
     }
 }

@@ -26,26 +26,26 @@ namespace Draughts
             return board[x, y] % 3;
         }
         //check if some of the pawns are entitled to promotion
-        public void sprawdzenie(int x, int y)
+        public bool check_promotion(int x, int y)
         {
+            bool promoted = false;
             if (board[x, y] % 3 == 1)
             {
                 if (y == 7)
                 {
-                    //to do
+                    promoted = true;
                     player1[board[x, y] / 3] = player1[board[x, y] / 3].promotion();
                 }
-                return;
             }
             if (board[x, y] % 3 == 2)
             {
                 if (y == 0)
                 {
-                    //to do
+                    promoted = true;
                     player2[board[x, y] / 3] = player2[board[x, y] / 3].promotion();
                 }
-                return;
             }
+            return promoted;
         }
         //get index of the pawn
         public int get_index(int x, int y)

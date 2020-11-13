@@ -18,9 +18,10 @@ namespace Draughts
     }
     public partial class Board : Form
     {
-        int square_size = 64;       
+        Queue<int> move_list = new Queue<int>();
+        int square_size = 64;
         int phase = 0;
-        Menu parent;
+        public Menu parent;
         DraughtsButton highlighted;
         Options o;
         Board_situation state;
@@ -84,7 +85,7 @@ namespace Draughts
             pawn.Name = string.Format("{0}-{1}", x, y);
             pawn.x = x;
             pawn.y = y;
-            pawn.Click += new EventHandler(this.ClickHandler);
+            pawn.Click += new EventHandler(this.MoveHandler);
             if (king)
             {
                 switch (id % 3)
@@ -122,7 +123,7 @@ namespace Draughts
             pawn.FlatAppearance.BorderSize = 0;
             return pawn;
         }
-        void ClickHandler(object sender, EventArgs e)
+        void MoveHandler(object sender, EventArgs e)
         {
             int result = 0;
             DraughtsButton field = (DraughtsButton)sender;
@@ -136,6 +137,8 @@ namespace Draughts
                         field.FlatAppearance.BorderSize = 2;
                         highlighted = field;
                         phase = 1;
+                        move_list.Enqueue(field.x);
+                        move_list.Enqueue(field.y);
                     }
                     break;
                 case 1: //make the move or change the pawn
@@ -147,44 +150,94 @@ namespace Draughts
                         field.FlatAppearance.BorderColor = Color.DarkGreen;
                         field.FlatAppearance.BorderSize = 2;
                         highlighted = field;
+                        move_list.Dequeue();
+                        move_list.Dequeue();
+                        move_list.Enqueue(field.x);
+                        move_list.Enqueue(field.y);
                     }
                     else
                     {
+
                         if (state.get_square(field.x, field.y) == 0)
                         {
                             result = state.move(highlighted.x, highlighted.y, field.x, field.y);
-                            switch(result)
+                            switch (result)
                             {
                                 //0 - incorrect move, no action neccessary, so no case
                                 case 1://end turn;
+                                    move_list.Enqueue(field.x);
+                                    move_list.Enqueue(field.y);
+                                    if (state.check_promotion(field.x, field.y))
+                                    {
+                                        if (state.active_side == 1)
+                                        {
+                                            field.Image = Properties.Resources.white_king;
+                                        }
+                                        else
+                                        {
+                                            field.Image = Properties.Resources.black_king;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        field.Image = highlighted.Image;
+                                    }
                                     field.id = highlighted.id;
-                                    field.Image = highlighted.Image;
                                     highlighted.Image = Properties.Resources.field;
                                     highlighted.id = 0;
                                     highlighted.FlatAppearance.BorderSize = 0;
                                     highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                                     phase = 0;
-                                    result = state.check_if_win();
-                                    if (result == state.active_side)
-                                    {
-
-                                    }
-                                        state.active_side = 3 - state.active_side;                                    
+                                    change_active();
                                     break;
                                 case 2://remove captured pawn and end turn
+                                    move_list.Enqueue(field.x);
+                                    move_list.Enqueue(field.y);
+                                    winCheck();
+                                    if (state.check_promotion(field.x, field.y))
+                                    {
+                                        if (state.active_side == 1)
+                                        {
+                                            field.Image = Properties.Resources.white_king;
+                                        }
+                                        else
+                                        {
+                                            field.Image = Properties.Resources.black_king;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        field.Image = highlighted.Image;
+                                    }
                                     field.id = highlighted.id;
-                                    field.Image = highlighted.Image;
                                     highlighted.Image = Properties.Resources.field;
                                     highlighted.id = 0;
                                     highlighted.FlatAppearance.BorderSize = 0;
                                     ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
                                     highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                                     phase = 0;
-                                    state.active_side = 3 - state.active_side;
+                                    change_active();
                                     break;
                                 case 3://further captures possible
+                                    winCheck();
+                                    move_list.Enqueue(field.x);
+                                    move_list.Enqueue(field.y);
+                                    if (state.check_promotion(field.x, field.y))
+                                    {
+                                        if (state.active_side == 1)
+                                        {
+                                            field.Image = Properties.Resources.white_king;
+                                        }
+                                        else
+                                        {
+                                            field.Image = Properties.Resources.black_king;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        field.Image = highlighted.Image;
+                                    }
                                     field.id = highlighted.id;
-                                    field.Image = highlighted.Image;
                                     field.FlatAppearance.BorderColor = Color.DarkGreen;
                                     field.FlatAppearance.BorderSize = 2;
                                     highlighted.Image = Properties.Resources.field;
@@ -199,25 +252,59 @@ namespace Draughts
                         }
                     }
                     break;
-                case 2:
+                case 2://move continuation after a jump
                     result = state.move(highlighted.x, highlighted.y, field.x, field.y);
                     switch (result)
                     {
                         //0,1 - incorrect move, no action neccessary, so no case
                         case 2://remove captured pawn and end turn
+                            move_list.Enqueue(field.x);
+                            move_list.Enqueue(field.y);
+                            winCheck();
+                            if (state.check_promotion(field.x, field.y))
+                            {
+                                if (state.active_side == 1)
+                                {
+                                    field.Image = Properties.Resources.white_king;
+                                }
+                                else
+                                {
+                                    field.Image = Properties.Resources.black_king;
+                                }
+                            }
+                            else
+                            {
+                                field.Image = highlighted.Image;
+                            }
                             field.id = highlighted.id;
-                            field.Image = highlighted.Image;
                             highlighted.Image = Properties.Resources.field;
                             highlighted.id = 0;
                             highlighted.FlatAppearance.BorderSize = 0;
                             highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                             phase = 0;
-                            state.active_side = 3 - state.active_side;
+                            change_active();
                             ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
                             break;
                         case 3://further captures possible
+                            move_list.Enqueue(field.x);
+                            move_list.Enqueue(field.y);
+                            winCheck();
+                            if (state.check_promotion(field.x, field.y))
+                            {
+                                if (state.active_side == 1)
+                                {
+                                    field.Image = Properties.Resources.white_king;
+                                }
+                                else
+                                {
+                                    field.Image = Properties.Resources.black_king;
+                                }
+                            }
+                            else
+                            {
+                                field.Image = highlighted.Image;
+                            }
                             field.id = highlighted.id;
-                            field.Image = highlighted.Image;
                             field.FlatAppearance.BorderColor = Color.DarkGreen;
                             field.FlatAppearance.BorderSize = 2;
                             highlighted.Image = Properties.Resources.field;
@@ -230,6 +317,179 @@ namespace Draughts
                             break;
                     }
                     break;
+            }
+        }
+        void MoveHandler(Queue<int> move_template)
+        {
+            int result = 0;
+            DraughtsButton highlighted = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", move_template.Dequeue(), move_template.Dequeue()), false)[0];
+            highlighted.FlatStyle = FlatStyle.Flat;
+            highlighted.FlatAppearance.BorderColor = Color.DarkGreen;
+            highlighted.FlatAppearance.BorderSize = 2;
+            DraughtsButton field = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", move_template.Dequeue(), move_template.Dequeue()), false)[0];
+            if (state.get_square(field.x, field.y) == 0)
+            {
+                result = state.move(highlighted.x, highlighted.y, field.x, field.y);
+                switch (result)
+                {
+                    case 1://end turn;
+                        if (state.check_promotion(field.x, field.y))
+                        {
+                            if (state.active_side == 1)
+                            {
+                                field.Image = Properties.Resources.white_king;
+                            }
+                            else
+                            {
+                                field.Image = Properties.Resources.black_king;
+                            }
+                        }
+                        else
+                        {
+                            field.Image = highlighted.Image;
+                        }
+                        field.id = highlighted.id;
+                        highlighted.Image = Properties.Resources.field;
+                        highlighted.id = 0;
+                        highlighted.FlatAppearance.BorderSize = 0;
+                        highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                        phase = 0;
+                        return;
+                    case 2://remove captured pawn and end turn
+                        winCheck();
+                        if (state.check_promotion(field.x, field.y))
+                        {
+                            if (state.active_side == 1)
+                            {
+                                field.Image = Properties.Resources.white_king;
+                            }
+                            else
+                            {
+                                field.Image = Properties.Resources.black_king;
+                            }
+                        }
+                        else
+                        {
+                            field.Image = highlighted.Image;
+                        }
+                        field.id = highlighted.id;
+                        highlighted.Image = Properties.Resources.field;
+                        highlighted.id = 0;
+                        highlighted.FlatAppearance.BorderSize = 0;
+                        ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
+                        highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                        phase = 0;
+                        return;
+                    case 3://further captures possible
+                        winCheck();
+                        if (state.check_promotion(field.x, field.y))
+                        {
+                            if (state.active_side == 1)
+                            {
+                                field.Image = Properties.Resources.white_king;
+                            }
+                            else
+                            {
+                                field.Image = Properties.Resources.black_king;
+                            }
+                        }
+                        else
+                        {
+                            field.Image = highlighted.Image;
+                        }
+                        highlighted.Image = Properties.Resources.field;
+                        ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
+                        highlighted.id = 0;
+                        highlighted.FlatAppearance.BorderSize = 0;
+                        highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                        MoveHandler(move_template, field.x, field.y);
+                        phase = 2;
+                        break;
+                }
+            }
+        }
+        void MoveHandler(Queue<int> move_template, int x, int y)
+        {
+            DraughtsButton highlighted = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", x, y), false)[0];
+            highlighted.FlatStyle = FlatStyle.Flat;
+            highlighted.FlatAppearance.BorderColor = Color.DarkGreen;
+            highlighted.FlatAppearance.BorderSize = 2;
+            DraughtsButton field = (DraughtsButton)this.Controls.Find(string.Format("{0}-{1]", move_template.Dequeue(), move_template.Dequeue()), false)[0];
+
+            int result = state.move(highlighted.x, highlighted.y, field.x, field.y);
+            switch (result)
+            {
+                //0,1 - incorrect move, no action neccessary, so no case
+                case 2://remove captured pawn and end turn
+                    winCheck();
+                    if (state.check_promotion(field.x, field.y))
+                    {
+                        if (state.active_side == 1)
+                        {
+                            field.Image = Properties.Resources.white_king;
+                        }
+                        else
+                        {
+                            field.Image = Properties.Resources.black_king;
+                        }
+                    }
+                    else
+                    {
+                        field.Image = highlighted.Image;
+                    }
+                    field.id = highlighted.id;
+                    highlighted.Image = Properties.Resources.field;
+                    highlighted.id = 0;
+                    highlighted.FlatAppearance.BorderSize = 0;
+                    highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                    phase = 0;
+                    change_active();
+                    ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
+                    break;
+                case 3://further captures possible      
+                    winCheck();
+                    if (state.check_promotion(field.x, field.y))
+                    {
+                        if (state.active_side == 1)
+                        {
+                            field.Image = Properties.Resources.white_king;
+                        }
+                        else
+                        {
+                            field.Image = Properties.Resources.black_king;
+                        }
+                    }
+                    else
+                    {
+                        field.Image = highlighted.Image;
+                    }
+                    highlighted.Image = Properties.Resources.field;
+                    ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
+                    highlighted.id = 0;
+                    highlighted.FlatAppearance.BorderSize = 0;
+                    highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                    MoveHandler(move_template, field.x, field.y);
+                    phase = 2;
+                    break;
+            }
+
+        }
+
+        void winCheck()
+        {
+            if (state.check_if_win() == state.active_side)//verify if active player has won
+            {
+                Endgame end = new Endgame(this, true);//show game result pop-up
+                end.Show();
+            }
+        }
+        void change_active()
+        {
+            state.active_side = 3 - state.active_side;
+            if (o.singlemode == false)
+            {
+                //to do
+                state.active_side = 3 - state.active_side;
             }
         }
     }
