@@ -20,7 +20,7 @@ pthread_mutex_t lock_queue = PTHREAD_MUTEX_INITIALIZER;
 
 int queue[QUEUE_SIZE] = {0};
 int server_socket_descriptor;
-int awaiting_player=0;
+int awaiting_player = 0;
 struct thread_data_t
 {
     int connection_socket_descriptor1;
@@ -45,122 +45,299 @@ void *ThreadBehavior(void *t_data)
     char input[10];
     int size;
     struct thread_data_t *th_data = (struct thread_data_t *)t_data;
-
-    while (1)
+    int player1[12];
+    int player1count = 12;
+    int player2[12];
+    int player2count = 12;
+    int game_in_progress = 1;
+    int board[8][8];
+    set_board(board, player1, player2);
+    while (game_in_progress)
     {
-        while(size<6)
+        int side = 1;
+        while (size < 6)
         {
-            size = read(th_data->connection_socket_descriptor1, input, 7);
+            size = read(th_data->connection_socket_descriptor1, input, 8);
         }
-        if (strncmp(input, "endconn", 6) == 0)
+        if (strncmp(input, "endconn!", 8) == 0)
         {
-            strncpy(input,"winner1",7);
-            write(th_data->connection_socket_descriptor2,input,7);
-            break;
+            game_in_progress = 0;
+            strncpy(input, "winnerT1", 8);
+            write(th_data->connection_socket_descriptor2, input, 8);
             break;
         }
-        else 
+        else
         {
-            if (strncmp(input, "mov", 3) == 0)
-            {                    
-                int x1 = input[3] - 48;
-                int y1 = input[4] - 48;
-                int x2 = input[5] - 48;
-                int y2 = input[6] - 48;
-                int move_evaluation = correct_move(x1,y1,x2,y2);
-                switch(move_evaluation)
+            if (strncmp(input, "move", 4) == 0 || strncmp(input, "jmp", 3) == 0)
+            {
+                int x1 = input[4] - 48;
+                int y1 = input[5] - 48;
+                int x2 = input[6] - 48;
+                int y2 = input[7] - 48;
+                int move_evaluation = 0;
+                if (strncmp(input, "move", 4) == 0)
                 {
-                    case 0:
-                        printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");                        
-                        strncpy(input,"winner2",7);                        
-                        write(th_data->connection_socket_descriptor2,input,7);
+                    move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);
+                }
+                else
+                {
+                    if (strncmp(input, "jmp0", 4) == 0)
+                    {
+                        move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                        player2count--;
+                    }
+                    else
+                    {
+                        int count = input[3] - 47;
+                        for (int i = 0; i < count && game_in_progress == 1; i++)
+                        {
+                            move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                            player2count--;
+                            switch (move_evaluation)
+                            {
+                            case 0:
+                                game_in_progress = 0;
+                                printf("Wykryto probe oszustwa. Gracz 1 zdyskwalifikowany.");
+                                strncpy(input, "winnerT2", 8);
+                                write(th_data->connection_socket_descriptor2, input, 8);
 
-                        strncpy(input,"looser2",7);                        
-                        write(th_data->connection_socket_descriptor1,input,7);
-                        break;
-                    case 1:
-                        write(th_data->connection_socket_descriptor2,input,7);
-                        break;
-                    case 2:
-                        printf("Gracz 2 zwyciezyl.");                        
-                        strncpy(input,"winner3",7);                        
-                        write(th_data->connection_socket_descriptor1,input,7);
+                                strncpy(input, "loooser2", 8);
+                                write(th_data->connection_socket_descriptor1, input, 8);
+                                break;
+                            case 1:
+                                if (player2count == 0)
+                                {
+                                    game_in_progress = 0;
+                                    printf("Gracz 1 zwyciezyl.");
+                                    strncpy(input, "winnerT3", 8);
+                                    write(th_data->connection_socket_descriptor1, input, 8);
 
-                        strncpy(input,"looser3",7);                        
-                        write(th_data->connection_socket_descriptor2,input,7);                        
-                        break;
+                                    strncpy(input, "loooser3", 8);
+                                    write(th_data->connection_socket_descriptor2, input, 8);
+                                }
+                                else
+                                {
+                                    write(th_data->connection_socket_descriptor2, input, 8);
+                                }
+                                break;
+                            }
+                            size = 0;
+                            while (size < 6)
+                            {
+                                size = read(th_data->connection_socket_descriptor1, input, 8);
+                            }
+                            if (strncmp(input, "endconn!", 8) == 0)
+                            {
+                                game_in_progress = 0;
+                                strncpy(input, "winnerT1", 8);
+                                write(th_data->connection_socket_descriptor2, input, 8);
+                                break;
+                            }
+                            else
+                            {
+                                if (strncmp(input, "jmp", 3) == 0 && input[3] - 48 == count)
+                                {
+                                    int x1 = input[4] - 48;
+                                    int y1 = input[5] - 48;
+                                    int x2 = input[6] - 48;
+                                    int y2 = input[7] - 48;
+                                    int move_evaluation = 0;
+                                }
+                                else
+                                {
+                                    game_in_progress = 0;
+                                    printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                                    strncpy(input, "winnerT2", 8);
+                                    write(th_data->connection_socket_descriptor2, input, 8);
+
+                                    strncpy(input, "loooser2", 8);
+                                    write(th_data->connection_socket_descriptor1, input, 8);
+                                }
+                            }
+                        }
+                    }
+                }
+                switch (move_evaluation)
+                {
+                case 0:
+                    game_in_progress = 0;
+                    printf("Wykryto probe oszustwa. Gracz 1 zdyskwalifikowany.");
+                    strncpy(input, "winnerT2", 8);
+                    write(th_data->connection_socket_descriptor2, input, 8);
+
+                    strncpy(input, "loooser2", 8);
+                    write(th_data->connection_socket_descriptor1, input, 8);
+                    break;
+                case 1:
+                    if (player2count == 0)
+                    {
+                        game_in_progress = 0;
+                        printf("Gracz 1 zwyciezyl.");
+                        strncpy(input, "winnerT3", 8);
+                        write(th_data->connection_socket_descriptor1, input, 8);
+
+                        strncpy(input, "loooser3", 8);
+                        write(th_data->connection_socket_descriptor2, input, 8);
+                    }
+                    else
+                    {
+                        write(th_data->connection_socket_descriptor2, input, 8);
+                    }
+                    break;
                 }
             }
             else
             {
+                game_in_progress = 0;
                 printf("Wykryto probe oszustwa. Gracz 1 zdyskwalifikowany.");
-                strncpy(input,"winner2",7);
-                write(th_data->connection_socket_descriptor2,input,7);
-                        
-                strncpy(input,"looser2",7);                        
-                write(th_data->connection_socket_descriptor1,input,7);
-                break;
+                strncpy(input, "winnerT2", 8);
+                write(th_data->connection_socket_descriptor2, input, 8);
+
+                strncpy(input, "loooser2", 8);
+                write(th_data->connection_socket_descriptor1, input, 8);
             }
         }
-        printf("Komenda dla gracza 1: %s\n",input);
-        size=0;
-        while(size<6)
+        if (game_in_progress == 0)
         {
-            size = read(th_data->connection_socket_descriptor2, input, 7);  
-        }
-        if (strncmp(input, "endconn", 6) == 0)
-        {
-            strncpy(input,"winner1",7);
-            write(th_data->connection_socket_descriptor1,input,7);
             break;
         }
-        else 
+        printf("Komenda dla gracza 1: %s\n", input);
+        size = 0;
+        side = 2;
+        while (size < 6)
         {
-            if (strncmp(input, "mov", 3) == 0)
-            {                    
-                int x1 = input[3] - 48;
-                int y1 = input[4] - 48;
-                int x2 = input[5] - 48;
-                int y2 = input[6] - 48;
-                int move_evaluation = correct_move(x1,y1,x2,y2);
-                switch(move_evaluation)
+            size = read(th_data->connection_socket_descriptor2, input, 8);
+        }
+        if (strncmp(input, "endconn!", 8) == 0)
+        {
+            game_in_progress = 0;
+            strncpy(input, "winnerT1", 8);
+            write(th_data->connection_socket_descriptor1, input, 8);
+            break;
+        }
+        else
+        {
+            if (strncmp(input, "move", 4) == 0 || strncmp(input, "jmp", 3) == 0)
+            {
+                int move_evaluation = 0;
+                int x1 = input[4] - 48;
+                int y1 = input[5] - 48;
+                int x2 = input[6] - 48;
+                int y2 = input[7] - 48;
+                if (strncmp(input, "move", 4) == 0)
                 {
-                    case 0:
-                        printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");                        
-                        strncpy(input,"winner2",7);                        
-                        write(th_data->connection_socket_descriptor1,input,7);
+                    int move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);
+                }
+                else
+                {
+                    if (strncmp(input, "jmp0", 4) == 0)
+                    {
+                        move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                        player1count--;
+                    }
+                    else
+                    {
+                        int count = input[3] - 47;
+                        for (int i = 0; i < count && game_in_progress == 1; i++)
+                        {
+                            move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                            player1count--;
+                            switch (move_evaluation)
+                            {
+                            case 0:
+                                game_in_progress = 0;
+                                printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                                strncpy(input, "winnerT2", 8);
+                                write(th_data->connection_socket_descriptor1, input, 8);
 
-                        strncpy(input,"looser2",7);                        
-                        write(th_data->connection_socket_descriptor2,input,7);
-                        break;
-                    case 1:
-                        write(th_data->connection_socket_descriptor1,input,7);
-                        break;
-                    case 2:
-                        printf("Gracz 2 zwyciezyl.");                        
-                        strncpy(input,"winner3",7);                        
-                        write(th_data->connection_socket_descriptor2,input,7);
+                                strncpy(input, "loooser2", 8);
+                                write(th_data->connection_socket_descriptor2, input, 8);
+                                break;
+                            case 1:
+                                if (player1count == 0)
+                                {
+                                    game_in_progress = 0;
+                                    printf("Gracz 2 zwyciezyl.");
+                                    strncpy(input, "winnerT3", 8);
+                                    write(th_data->connection_socket_descriptor2, input, 8);
 
-                        strncpy(input,"looser3",7);                        
-                        write(th_data->connection_socket_descriptor1,input,7);
-                        break;
-                        break;
+                                    strncpy(input, "loooser3", 8);
+                                    write(th_data->connection_socket_descriptor1, input, 8);
+                                }
+                                else
+                                {
+                                    write(th_data->connection_socket_descriptor1, input, 8);
+                                }
+                                break;
+                            }
+                            size = 0;
+                            while (size < 6)
+                            {
+                                size = read(th_data->connection_socket_descriptor2, input, 8);
+                            }
+                            if (strncmp(input, "endconn!", 8) == 0)
+                            {
+                                game_in_progress = 0;
+                                strncpy(input, "winnerT1", 8);
+                                write(th_data->connection_socket_descriptor1, input, 8);
+                                break;
+                            }
+                            else
+                            {
+                                if (strncmp(input, "jmp", 3) == 0 && input[3] - 48 == count)
+                                {
+                                    int x1 = input[4] - 48;
+                                    int y1 = input[5] - 48;
+                                    int x2 = input[6] - 48;
+                                    int y2 = input[7] - 48;
+                                    int move_evaluation = 0;
+                                }
+                                else
+                                {
+                                    game_in_progress = 0;
+                                    printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                                    strncpy(input, "winnerT2", 8);
+                                    write(th_data->connection_socket_descriptor1, input, 8);
+
+                                    strncpy(input, "loooser2", 8);
+                                    write(th_data->connection_socket_descriptor2, input, 8);
+                                }
+                            }
+                        }
+                    }
+                }
+                switch (move_evaluation)
+                {
+                case 0:
+                    game_in_progress = 0;
+                    printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                    strncpy(input, "winnerT2", 8);
+                    write(th_data->connection_socket_descriptor1, input, 8);
+
+                    strncpy(input, "loooser2", 8);
+                    write(th_data->connection_socket_descriptor2, input, 8);
+                    break;
+                case 1:
+                    if (player2count == 0)
+                    {
+                        game_in_progress = 0;
+                        printf("Gracz 2 zwyciezyl.");
+                        strncpy(input, "winnerT3", 8);
+                        write(th_data->connection_socket_descriptor2, input, 8);
+
+                        strncpy(input, "loooser3", 8);
+                        write(th_data->connection_socket_descriptor1, input, 8);
+                    }
+                    else
+                    {
+                        write(th_data->connection_socket_descriptor1, input, 8);
+                    }
+                    break;
                 }
             }
-            else
-            {
-                printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
-                strncpy(input,"winner2",7);
-                write(th_data->connection_socket_descriptor1,input,7);
-                        
-                strncpy(input,"looser2",7);                        
-                write(th_data->connection_socket_descriptor2,input,7);
-                break;
-            }
-            
         }
-        printf("Komenda dla gracza 2: %s\n",input);
-        size=0;
+        printf("Komenda dla gracza 2: %s\n", input);
+        size = 0;
     }
     printf("Klient sie rozlaczyl.\n");
     pthread_detach(pthread_self());
@@ -198,20 +375,19 @@ void handleConnection(int connection_socket_descriptor)
         }
     }
 
- 
-    if(awaiting_player==0)
+    if (awaiting_player == 0)
     {
-        awaiting_player=connection_socket_descriptor;
+        awaiting_player = connection_socket_descriptor;
         pthread_mutex_unlock(&lock_queue);
     }
-    else 
+    else
     {
         pthread_t thread1;
 
         struct thread_data_t *t_data = (struct thread_data_t *)malloc(sizeof(struct thread_data_t));
         t_data->connection_socket_descriptor1 = connection_socket_descriptor;
         t_data->connection_socket_descriptor2 = awaiting_player;
-        awaiting_player=0;
+        awaiting_player = 0;
         pthread_mutex_unlock(&lock_queue);
         create_result = pthread_create(&thread1, NULL, ThreadBehavior, (void *)t_data);
         if (create_result)
