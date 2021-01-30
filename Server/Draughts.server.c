@@ -137,11 +137,11 @@ void *ThreadBehavior(void *t_data)
                             {
                                 if (strncmp(input, "jmp", 3) == 0 && input[3] - 48 == count)
                                 {
-                                    int x1 = input[4] - 48;
-                                    int y1 = input[5] - 48;
-                                    int x2 = input[6] - 48;
-                                    int y2 = input[7] - 48;
-                                    int move_evaluation = 0;
+                                    x1 = input[4] - 48;
+                                    y1 = input[5] - 48;
+                                    x2 = input[6] - 48;
+                                    y2 = input[7] - 48;
+                                    move_evaluation = 0;
                                 }
                                 else
                                 {
@@ -226,7 +226,7 @@ void *ThreadBehavior(void *t_data)
                 int y2 = input[7] - 48;
                 if (strncmp(input, "move", 4) == 0)
                 {
-                    int move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);
+                    move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);
                 }
                 else
                 {
@@ -286,11 +286,11 @@ void *ThreadBehavior(void *t_data)
                             {
                                 if (strncmp(input, "jmp", 3) == 0 && input[3] - 48 == count)
                                 {
-                                    int x1 = input[4] - 48;
-                                    int y1 = input[5] - 48;
-                                    int x2 = input[6] - 48;
-                                    int y2 = input[7] - 48;
-                                    int move_evaluation = 0;
+                                    x1 = input[4] - 48;
+                                    y1 = input[5] - 48;
+                                    x2 = input[6] - 48;
+                                    y2 = input[7] - 48;
+                                    move_evaluation = 0;
                                 }
                                 else
                                 {
