@@ -19,6 +19,8 @@ namespace Draughts
     public partial class Board : Form
     {
         Queue<int> move_list = new Queue<int>();
+        bool jump = false;
+        WebComm wc;
         int square_size = 64;
         int phase = 0;
         public Menu parent;
@@ -29,24 +31,43 @@ namespace Draughts
         {
             parent = main;
             o = in_options;
+            state = new Board_situation();
+            state.new_game();           
             InitializeComponent();
         }
 
         private void Board_Load(object sender, EventArgs e)
-        {
+        {            
             this.BackgroundImage = Properties.Resources.background;
             this.BackgroundImageLayout = ImageLayout.Stretch;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MinimizeBox = false;
             this.MaximizeBox = false;
-            state = new Board_situation();
-            state.new_game();
             Board_setup();
+            if (o.local == false)
+            {
+                wc = new WebComm(o);
+                int local_player = wc.StartClient();
+                if (local_player == 2)
+                {
+                    state.active_side = 3 - state.active_side;
+                    change_active();
+                }
+                if(local_player==-1)
+                {
+                    parent.Show();
+                    this.Close();
+                }
+            }
+            parent.ToggleWait(false);
         }
         //on closing of the game window, the program should return to the main menu and if the game if on-line send info to the server
         private void Board_closed(object sender, FormClosedEventArgs e)
         {
-            //to do
+           if(!o.local)
+            {
+                wc.CloseConn();
+            }
             parent.Show();
         }
         //sets the pawns on the board
@@ -194,6 +215,7 @@ namespace Draughts
                                     change_active();
                                     break;
                                 case 2://remove captured pawn and end turn
+                                    jump = true;
                                     move_list.Enqueue(field.x);
                                     move_list.Enqueue(field.y);
                                     winCheck();
@@ -222,6 +244,7 @@ namespace Draughts
                                     change_active();
                                     break;
                                 case 3://further captures possible
+                                    jump = true;
                                     winCheck();
                                     move_list.Enqueue(field.x);
                                     move_list.Enqueue(field.y);
@@ -285,8 +308,8 @@ namespace Draughts
                             highlighted.FlatAppearance.BorderSize = 0;
                             highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                             phase = 0;
-                            change_active();
                             ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
+                            change_active();                            
                             break;
                         case 3://further captures possible
                             move_list.Enqueue(field.x);
@@ -409,7 +432,7 @@ namespace Draughts
                         highlighted.FlatAppearance.BorderSize = 0;
                         highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                         MoveHandler(move_template, field.x, field.y);
-                        phase = 2;
+                        phase = 0;
                         break;
                 }
             }
@@ -450,7 +473,7 @@ namespace Draughts
                     highlighted.FlatAppearance.BorderSize = 0;
                     highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                     phase = 0;
-                    change_active();
+                    //change_active();
                     ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
                     break;
                 case 3://further captures possible      
@@ -486,6 +509,8 @@ namespace Draughts
         {
             if (state.check_if_win() == state.active_side)//verify if active player has won
             {
+                wc.SendMove(move_list, jump);
+                move_list = wc.GetMove();
                 Endgame end = new Endgame(this, true);//show game result pop-up
                 end.Show();
             }
@@ -495,10 +520,53 @@ namespace Draughts
             state.active_side = 3 - state.active_side;
             if (o.local == false)//in game via web pass move_list to the server
             {
-                //to do
-                
+                wc.SendMove(move_list,jump);
+                this.Refresh();
+                move_list = wc.GetMove();
+                if (move_list.Count == 2)
+                {
+                    Endgame end;
+                    if (move_list.Dequeue() == 1)
+                    {
+                        switch (move_list.Dequeue())
+                        {
+                            case 1:
+                                end = new Endgame(this, true,"Drugi gracz poddał partię.");//show game result pop-up
+                                end.Show();
+                                break;
+                            case 2:
+                                end = new Endgame(this, true, "Drugi gracz został\nzdyskwalifikowany za oszustwo.");//show game result pop-up
+                                end.Show();
+                                break;
+                            case 3:
+                                end = new Endgame(this, true, "Zwyciężyłeś.");//show game result pop-up
+                                end.Show();
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (move_list.Dequeue())
+                        {
+                            case 2:
+                                end = new Endgame(this, false, "Zostałeś zdyskwalifikowany za oszustwo.");//show game result pop-up
+                                end.Show();
+                                break;
+                            case 3:
+                                end = new Endgame(this, false, "Przegrałeś.\n Może następnym razem będzie lepiej?");//show game result pop-up
+                                end.Show();
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    MoveHandler(move_list);
+                }
                 state.active_side = 3 - state.active_side;
             }
+            move_list.Clear();
+            jump = false;
         }
     }
 }

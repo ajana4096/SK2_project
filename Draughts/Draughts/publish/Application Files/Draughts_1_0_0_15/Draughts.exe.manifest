@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="Draughts.exe" version="1.0.0.15" publicKeyToken="502958d63fd99fe2" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="Draughts" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="Draughts.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Draughts.exe" size="89000">
+      <assemblyIdentity name="Draughts" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>cSZNaMWs4Zu9Q0RVSpymLa/G65B6XwgSq+cKBRGx/Bs=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Draughts.exe.config" size="189">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>R+Wg8QGvQVHX8T0ta/qbhH1bXkqY0fRnS3wBV3J0bN8=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=ibm\Gsue404" issuerKeyHash="15967412cc6c7a5d68fb615cce49689ebd0e1b1e" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>bLvYKJBym0Ua5Z0XzTrHi6QKpUV65XROi/RgUGavh6U=</DigestValue></Reference></SignedInfo><SignatureValue>U3dOu6pJZ/369H/39uOU9dhs0FJdG2vBGiTqAT8ye746p/bD/4wAOSbPQiOM2McvweQicEng6E36bKctfvwnBQnyyWKd7h4S6n5hZiBoCluJE4ZjQARMmobinlCGB7KfOfRrnC2beghLwdHzG+Vihytsz6XJARSUZT/pTuYvwZ8=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>kudhaJTlMCvhTpLEfdIHtEsBG9fblkY82UlxnZnph3cOiiSMwP0uQXbMZKV2EznaM2qV0hnab7S8JN6hKl+Bvqel2zD3bEuvO9gO1PToROkqXADylvx5DN8UfETQY2Zc+T7oG6j8E2VK/soV9UAix+j+ghpMaPgoh58vDCl4BxE=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="a587af665060f48b4e74e57a45a50aa48bc73acd179de51a459b729028d8bb6c" Description="" Url=""><as:assemblyIdentity name="Draughts.exe" version="1.0.0.15" publicKeyToken="502958d63fd99fe2" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=ibm\Gsue404</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>3qVvk34OzIJpRCloXwMmvFhctjrrUlwiSVqIp6ZfqyM=</DigestValue></Reference></SignedInfo><SignatureValue>OdetT5d8UXHkOkpgb/9sV0fUsEvUF7ra8b/43HKYbtJhxxNl9pjeSIomcHPcY2wsApUzBvxk7f0q1wEwOgR6YStTMX+/kZd7dGSH33vbqj0UdgV02LgOxewmRwWcjyc+YeyI2r6rXPeu+9gbgkRo3DbA3c10eI/cixA1TznrA0c=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>kudhaJTlMCvhTpLEfdIHtEsBG9fblkY82UlxnZnph3cOiiSMwP0uQXbMZKV2EznaM2qV0hnab7S8JN6hKl+Bvqel2zD3bEuvO9gO1PToROkqXADylvx5DN8UfETQY2Zc+T7oG6j8E2VK/soV9UAix+j+ghpMaPgoh58vDCl4BxE=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIBxTCCAS6gAwIBAgIQYek/7Nrq57dHA3PL8+IQujANBgkqhkiG9w0BAQsFADAhMR8wHQYDVQQDHhYAaQBiAG0AXABHAHMAdQBlADQAMAA0MB4XDTIxMDEyNTE2MDgyMloXDTIyMDEyNTIyMDgyMlowITEfMB0GA1UEAx4WAGkAYgBtAFwARwBzAHUAZQA0ADAANDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAkudhaJTlMCvhTpLEfdIHtEsBG9fblkY82UlxnZnph3cOiiSMwP0uQXbMZKV2EznaM2qV0hnab7S8JN6hKl+Bvqel2zD3bEuvO9gO1PToROkqXADylvx5DN8UfETQY2Zc+T7oG6j8E2VK/soV9UAix+j+ghpMaPgoh58vDCl4BxECAwEAATANBgkqhkiG9w0BAQsFAAOBgQArP7z1kVLDda8Rw+w/DWqMB/CQxmYyeSA1bjTw5K6rVpevKLH3Olw/4VzI6dzOoUWvKJLdHi7+kH6UBLarFg9XCiZuNfC0aa+Z/F5AU13yvP8LDPj7uSwE0ZKKVCBB/zFTiT00NVjn6TSpZVLk1yEhATmMNTX/Ry8/Cq4cGiC0Mg==</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
