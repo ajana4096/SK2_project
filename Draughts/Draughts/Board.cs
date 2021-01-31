@@ -53,6 +53,11 @@ namespace Draughts
                     state.active_side = 3 - state.active_side;
                     change_active();
                 }
+                if(local_player==-1)
+                {
+                    parent.Show();
+                    this.Close();
+                }
             }
             parent.ToggleWait(false);
         }
@@ -303,8 +308,8 @@ namespace Draughts
                             highlighted.FlatAppearance.BorderSize = 0;
                             highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                             phase = 0;
-                            change_active();
                             ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
+                            change_active();                            
                             break;
                         case 3://further captures possible
                             move_list.Enqueue(field.x);
@@ -427,7 +432,7 @@ namespace Draughts
                         highlighted.FlatAppearance.BorderSize = 0;
                         highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                         MoveHandler(move_template, field.x, field.y);
-                        phase = 2;
+                        phase = 0;
                         break;
                 }
             }
@@ -468,7 +473,7 @@ namespace Draughts
                     highlighted.FlatAppearance.BorderSize = 0;
                     highlighted.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                     phase = 0;
-                    change_active();
+                    //change_active();
                     ((DraughtsButton)this.Controls.Find(state.to_kill, false)[0]).Image = Properties.Resources.field;
                     break;
                 case 3://further captures possible      

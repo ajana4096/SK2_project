@@ -15,7 +15,25 @@ namespace Draughts
             int player = 0;
             try
             {
-                IPAddress ipAddress = IPAddress.Parse(o.ip_addres);
+                IPAddress ipAddress;
+                if (!IPAddress.TryParse(o.ip_addres, out ipAddress))
+                {
+                    IPHostEntry hostEntry;
+
+                    hostEntry = Dns.GetHostEntry(o.http_name);
+
+                    //you might get more than one ip for a hostname since 
+                    //DNS supports more than one record
+
+                    if (hostEntry.AddressList.Length > 0)
+                    {
+                        ipAddress = hostEntry.AddressList[0];
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, 1234);
 
                 // Create a TCP/IP  socket.    
@@ -33,6 +51,7 @@ namespace Draughts
                 }
                 catch (Exception e)
                 {
+                    player = -1;
                 }
 
             }
@@ -88,8 +107,6 @@ namespace Draughts
                     x1 = x2;
                     y1 = y2;
                 }
-                // Send the data through the socket.    
-                sender.Send(msg);
             }
             else
             {
