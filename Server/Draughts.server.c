@@ -131,7 +131,7 @@ void *ThreadBehavior(void *t_data)
                                 break;
                             }
                             size = 0;
-                            while (size < 6)
+                            while (size < 8)
                             {
                                 size = read(th_data->connection_socket_descriptor1, input, 8);
                             }
@@ -217,7 +217,7 @@ void *ThreadBehavior(void *t_data)
         size = 0;
         draw_board(board);   
         side = 2;
-        while (size < 6)
+        while (size < 8)
         {
             size = read(th_data->connection_socket_descriptor2, input, 8);
         }
@@ -288,7 +288,7 @@ void *ThreadBehavior(void *t_data)
                                 break;
                             }
                             size = 0;
-                            while (size < 6)
+                            while (size < 8)
                             {
                                 size = read(th_data->connection_socket_descriptor2, input, 8);
                                 
