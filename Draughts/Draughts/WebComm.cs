@@ -19,7 +19,7 @@ namespace Draughts
                 if (!IPAddress.TryParse(o.ip_addres, out ipAddress))
                 {
                     IPHostEntry hostEntry;
-
+    
                     hostEntry = Dns.GetHostEntry(o.http_name);
 
                     //you might get more than one ip for a hostname since 
@@ -167,6 +167,10 @@ namespace Draughts
                     case "win":
                         res.Enqueue(1);
                         res.Enqueue(result[7] - 48);
+                        break;
+                    default:
+                        res.Enqueue(-2);
+                        res.Enqueue(0);
                         break;
                 }
             }

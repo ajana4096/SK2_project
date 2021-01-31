@@ -526,8 +526,9 @@ namespace Draughts
                 if (move_list.Count == 2)
                 {
                     Endgame end;
-                    if (move_list.Dequeue() == 1)
+                    switch(move_list.Dequeue())
                     {
+                        case 1:
                         switch (move_list.Dequeue())
                         {
                             case 1:
@@ -543,9 +544,8 @@ namespace Draughts
                                 end.Show();
                                 break;
                         }
-                    }
-                    else
-                    {
+                            break;
+                        case -1:
                         switch (move_list.Dequeue())
                         {
                             case 2:
@@ -557,6 +557,10 @@ namespace Draughts
                                 end.Show();
                                 break;
                         }
+                            break;
+                        case -2:
+                            end = new Endgame(this, true, "Wygrałeś");//show game result pop-up
+                            break;
                     }
                 }
                 else
