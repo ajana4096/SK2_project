@@ -18,7 +18,7 @@
 
 pthread_mutex_t lock_queue = PTHREAD_MUTEX_INITIALIZER;
 
-int queue[QUEUE_SIZE] = {0};
+int queue[QUEUE_SIZE];
 int server_socket_descriptor;
 int awaiting_player = 0;
 struct thread_data_t
@@ -57,7 +57,8 @@ void *ThreadBehavior(void *t_data)
     strncpy(input, "Player:2", 8);
     write(th_data->connection_socket_descriptor2, input, 8);
     while (game_in_progress)
-    {
+    {        
+        draw_board(board);   
         int side = 1;
         while (size < 6)
         {
@@ -95,7 +96,7 @@ void *ThreadBehavior(void *t_data)
                     }
                     else
                     {
-                        int count = input[3] - 47;
+                        int count = input[3] - 48;
                         for (int i = 0; i < count && game_in_progress == 1; i++)
                         {
                             move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
@@ -144,13 +145,16 @@ void *ThreadBehavior(void *t_data)
                             }
                             else
                             {
-                                if (strncmp(input, "jmp", 3) == 0 && input[3] - 48 == count)
+                                if (strncmp(input, "jmp", 3) == 0)
                                 {
                                     x1 = input[4] - 48;
                                     y1 = input[5] - 48;
                                     x2 = input[6] - 48;
                                     y2 = input[7] - 48;
                                     move_evaluation = 0;
+                                    move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                                    check_promotion(x2,y2,board,player1,player2);
+                                    player2count--;
                                 }
                                 else
                                 {
@@ -211,6 +215,7 @@ void *ThreadBehavior(void *t_data)
             break;
         }        
         size = 0;
+        draw_board(board);   
         side = 2;
         while (size < 6)
         {
@@ -248,12 +253,12 @@ void *ThreadBehavior(void *t_data)
                     }
                     else
                     {
-                        int count = input[3] - 47;
+                        int count = input[3] - 48;
+                        move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                        check_promotion(x2,y2,board,player1,player2);
+                        player1count--;
                         for (int i = 0; i < count && game_in_progress == 1; i++)
                         {
-                            move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
-                            check_promotion(x2,y2,board,player1,player2);
-                            player1count--;
                             switch (move_evaluation)
                             {
                             case 0:
@@ -286,8 +291,9 @@ void *ThreadBehavior(void *t_data)
                             while (size < 6)
                             {
                                 size = read(th_data->connection_socket_descriptor2, input, 8);
-                                printf("Komenda dla gracza 2: %s\n", input);
+                                
                             }
+                            printf("Komenda dla gracza 2: %s\n", input);
                             if (strncmp(input, "endconn!", 8) == 0)
                             {
                                 game_in_progress = 0;
@@ -297,13 +303,16 @@ void *ThreadBehavior(void *t_data)
                             }
                             else
                             {
-                                if (strncmp(input, "jmp", 3) == 0 && input[3] - 48 == count)
+                                if (strncmp(input, "jmp", 3) == 0)
                                 {
                                     x1 = input[4] - 48;
                                     y1 = input[5] - 48;
                                     x2 = input[6] - 48;
                                     y2 = input[7] - 48;
-                                    move_evaluation = 0;
+                                    
+                                    move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                                    check_promotion(x2,y2,board,player1,player2);
+                                    player1count--;
                                 }
                                 else
                                 {

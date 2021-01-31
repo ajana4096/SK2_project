@@ -1,3 +1,14 @@
+void draw_board(int board[8][8])
+{
+    for(int j = 0;j<8;j++)
+    {
+        for(int i=0;i<8;i++)
+        {
+            printf("%d ",board[i][j]%3);
+        }
+        printf("\n");
+    }
+}
 //check if the pawn at given position is entitled to promotion
 void set_board(int board[8][8], int player1[12], int player2[12])
 {
@@ -57,6 +68,7 @@ int get_square(int x, int y, int board[8][8])
 
 int king(int board[8][8], int x1, int y1, int x2, int y2, int side)
 {
+    printf("king\n");
     if (x1 - x2 == y1 - y2) //verify if the is in correct diagonal direction
     {
         if (x1 > x2)
@@ -227,9 +239,14 @@ int move_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
 }
 int move(int board[8][8], int player1[12], int player2[12], int x1, int y1, int x2, int y2, int side)
 {    
-    if (get_square(x1, y1, board) != side || get_square(x2, y2, board) != 0)
+    if (get_square(x1, y1, board) != side)
     {
         printf("#E2\n");
+        return 0; //you can't move a pawn that isn't there or two an occupied square
+    }
+    if (get_square(x2, y2, board) != 0)
+    {
+        printf("#E5\n");
         return 0; //you can't move a pawn that isn't there or two an occupied square
     }
     int index = get_index(x1, y1, board)/3;
@@ -265,10 +282,14 @@ int move(int board[8][8], int player1[12], int player2[12], int x1, int y1, int 
 }
 int jump_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
 {
+    printf("jump_pawn\n");
     if (x2 - x1 == 2 && y2 - y1 == 2)
     {
         if (get_square(x1 + 1, y1 + 1, board) == 3 - side)
         {
+            board[x2][y2] = board[x1][y1];
+            board[x1+1][y1+1]=0;
+            board[x1][y1] = 0;            
             return 1;
         }
         else
@@ -281,10 +302,14 @@ int jump_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
     {
         if (get_square(x1 - 1, y1 - 1, board) == 3 - side)
         {
+            board[x2][y2] = board[x1][y1];
+            board[x1-1][y1-1]=0;
+            board[x1][y1] = 0;                     
             return 1;
         }
         else
         {
+            printf("#13\n");
             return 0;
         }
     }
@@ -292,10 +317,14 @@ int jump_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
     {
         if (get_square(x1 + 1, y1 - 1, board) == 3 - side)
         {
+            board[x2][y2] = board[x1][y1];
+            board[x1+1][y1-1]=0;
+            board[x1][y1] = 0;                       
             return 1;
         }
         else
         {
+            printf("#14\n");
             return 0;
         }
     }
@@ -303,13 +332,18 @@ int jump_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
     {
         if (get_square(x1 - 1, y1 + 1, board) == 3 - side)
         {
+            board[x2][y2] = board[x1][y1];
+            board[x1-1][y1+1]=0;
+            board[x1][y1] = 0;
             return 1;
         }
         else
         {
+            printf("#15\n");
             return 0;
         }
     }
+    printf("#16\n");
     return 0;
 }
 int jump(int board[8][8], int player1[12], int player2[12], int x1, int y1, int x2, int y2, int side)
@@ -317,6 +351,7 @@ int jump(int board[8][8], int player1[12], int player2[12], int x1, int y1, int 
     if (get_square(x1, y1, board) != side || get_square(x2, y2, board) != 0)
     {
         printf("#E1\n");
+        printf("%d -> %d",get_square(x1, y1, board),get_square(x2, y2, board));
         return 0; //you can't move a pawn that isn't there or two an occupied square
     }
     int index = get_index(x1, y1, board)/3;
@@ -343,5 +378,5 @@ int jump(int board[8][8], int player1[12], int player2[12], int x1, int y1, int 
 
             return king(board, x1, y1, x2, y2, side)-1;
         }
-    }
+    }    
 }
