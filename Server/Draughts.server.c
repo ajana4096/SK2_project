@@ -52,6 +52,10 @@ void *ThreadBehavior(void *t_data)
     int game_in_progress = 1;
     int board[8][8];
     set_board(board, player1, player2);
+    strncpy(input, "Player:1", 8);
+    write(th_data->connection_socket_descriptor1, input, 8);
+    strncpy(input, "Player:2", 8);
+    write(th_data->connection_socket_descriptor2, input, 8);
     while (game_in_progress)
     {
         int side = 1;
@@ -59,6 +63,7 @@ void *ThreadBehavior(void *t_data)
         {
             size = read(th_data->connection_socket_descriptor1, input, 8);
         }
+        printf("Komenda dla gracza 1: %s\n", input);
         if (strncmp(input, "endconn!", 8) == 0)
         {
             game_in_progress = 0;
@@ -76,14 +81,16 @@ void *ThreadBehavior(void *t_data)
                 int y2 = input[7] - 48;
                 int move_evaluation = 0;
                 if (strncmp(input, "move", 4) == 0)
-                {
-                    move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);
+                {                    
+                    move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);                    
+                    check_promotion(x2,y2,board,player1,player2);
                 }
                 else
                 {
                     if (strncmp(input, "jmp0", 4) == 0)
                     {
                         move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                        check_promotion(x2,y2,board,player1,player2);
                         player2count--;
                     }
                     else
@@ -92,12 +99,13 @@ void *ThreadBehavior(void *t_data)
                         for (int i = 0; i < count && game_in_progress == 1; i++)
                         {
                             move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                            check_promotion(x2,y2,board,player1,player2);
                             player2count--;
                             switch (move_evaluation)
                             {
                             case 0:
                                 game_in_progress = 0;
-                                printf("Wykryto probe oszustwa. Gracz 1 zdyskwalifikowany.");
+                                printf("Wykryto probe oszustwa - niepoprawny ruch. Gracz 1 zdyskwalifikowany.\n");
                                 strncpy(input, "winnerT2", 8);
                                 write(th_data->connection_socket_descriptor2, input, 8);
 
@@ -108,7 +116,7 @@ void *ThreadBehavior(void *t_data)
                                 if (player2count == 0)
                                 {
                                     game_in_progress = 0;
-                                    printf("Gracz 1 zwyciezyl.");
+                                    printf("Gracz 1 zwyciezyl.\n");
                                     strncpy(input, "winnerT3", 8);
                                     write(th_data->connection_socket_descriptor1, input, 8);
 
@@ -126,6 +134,7 @@ void *ThreadBehavior(void *t_data)
                             {
                                 size = read(th_data->connection_socket_descriptor1, input, 8);
                             }
+                            printf("Komenda dla gracza 1: %s\n", input);
                             if (strncmp(input, "endconn!", 8) == 0)
                             {
                                 game_in_progress = 0;
@@ -146,7 +155,7 @@ void *ThreadBehavior(void *t_data)
                                 else
                                 {
                                     game_in_progress = 0;
-                                    printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                                    printf("Wykryto probe oszustwa - nieznana komenda. Gracz 1 zdyskwalifikowany.\n");
                                     strncpy(input, "winnerT2", 8);
                                     write(th_data->connection_socket_descriptor2, input, 8);
 
@@ -161,7 +170,7 @@ void *ThreadBehavior(void *t_data)
                 {
                 case 0:
                     game_in_progress = 0;
-                    printf("Wykryto probe oszustwa. Gracz 1 zdyskwalifikowany.");
+                    printf("Wykryto probe oszustwa - niepoprawny ruch. Gracz 1 zdyskwalifikowany.\n");
                     strncpy(input, "winnerT2", 8);
                     write(th_data->connection_socket_descriptor2, input, 8);
 
@@ -172,7 +181,7 @@ void *ThreadBehavior(void *t_data)
                     if (player2count == 0)
                     {
                         game_in_progress = 0;
-                        printf("Gracz 1 zwyciezyl.");
+                        printf("Gracz 1 zwyciezyl.\n");
                         strncpy(input, "winnerT3", 8);
                         write(th_data->connection_socket_descriptor1, input, 8);
 
@@ -189,7 +198,7 @@ void *ThreadBehavior(void *t_data)
             else
             {
                 game_in_progress = 0;
-                printf("Wykryto probe oszustwa. Gracz 1 zdyskwalifikowany.");
+                printf("Wykryto probe oszustwa - nieznana komenda. Gracz 1 zdyskwalifikowany.\n");
                 strncpy(input, "winnerT2", 8);
                 write(th_data->connection_socket_descriptor2, input, 8);
 
@@ -200,14 +209,14 @@ void *ThreadBehavior(void *t_data)
         if (game_in_progress == 0)
         {
             break;
-        }
-        printf("Komenda dla gracza 1: %s\n", input);
+        }        
         size = 0;
         side = 2;
         while (size < 6)
         {
             size = read(th_data->connection_socket_descriptor2, input, 8);
         }
+        printf("Komenda dla gracza 2: %s\n", input);
         if (strncmp(input, "endconn!", 8) == 0)
         {
             game_in_progress = 0;
@@ -227,12 +236,14 @@ void *ThreadBehavior(void *t_data)
                 if (strncmp(input, "move", 4) == 0)
                 {
                     move_evaluation = move(board, player1, player2,x1,y1,x2,y2,side);
+                    check_promotion(x2,y2,board,player1,player2);
                 }
                 else
                 {
                     if (strncmp(input, "jmp0", 4) == 0)
                     {
                         move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                        check_promotion(x2,y2,board,player1,player2);
                         player1count--;
                     }
                     else
@@ -241,12 +252,13 @@ void *ThreadBehavior(void *t_data)
                         for (int i = 0; i < count && game_in_progress == 1; i++)
                         {
                             move_evaluation = jump(board, player1, player2, x1, y1, x2, y2,side);
+                            check_promotion(x2,y2,board,player1,player2);
                             player1count--;
                             switch (move_evaluation)
                             {
                             case 0:
                                 game_in_progress = 0;
-                                printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                                printf("Wykryto probe oszustwa - niepoprawny ruch. Gracz 2 zdyskwalifikowany.\n");
                                 strncpy(input, "winnerT2", 8);
                                 write(th_data->connection_socket_descriptor1, input, 8);
 
@@ -274,6 +286,7 @@ void *ThreadBehavior(void *t_data)
                             while (size < 6)
                             {
                                 size = read(th_data->connection_socket_descriptor2, input, 8);
+                                printf("Komenda dla gracza 2: %s\n", input);
                             }
                             if (strncmp(input, "endconn!", 8) == 0)
                             {
@@ -295,7 +308,7 @@ void *ThreadBehavior(void *t_data)
                                 else
                                 {
                                     game_in_progress = 0;
-                                    printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                                    printf("Wykryto probe oszustwa - nieznana komenda. Gracz 2 zdyskwalifikowany.\n");
                                     strncpy(input, "winnerT2", 8);
                                     write(th_data->connection_socket_descriptor1, input, 8);
 
@@ -310,7 +323,7 @@ void *ThreadBehavior(void *t_data)
                 {
                 case 0:
                     game_in_progress = 0;
-                    printf("Wykryto probe oszustwa. Gracz 2 zdyskwalifikowany.");
+                    printf("Wykryto probe oszustwa - niepoprawny ruch. Gracz 2 zdyskwalifikowany.\n");
                     strncpy(input, "winnerT2", 8);
                     write(th_data->connection_socket_descriptor1, input, 8);
 
@@ -335,8 +348,7 @@ void *ThreadBehavior(void *t_data)
                     break;
                 }
             }
-        }
-        printf("Komenda dla gracza 2: %s\n", input);
+        }        
         size = 0;
     }
     printf("Klient sie rozlaczyl.\n");
@@ -405,6 +417,7 @@ int main(int argc, char *argv[])
     int bind_result;
     int listen_result;
     char reuse_addr_val = 1;
+    int port = SERVER_PORT;
     struct sockaddr_in server_address;
 
     //inicjalizacja gniazda serwera
@@ -414,7 +427,7 @@ int main(int argc, char *argv[])
     memset(&server_address, 0, sizeof(struct sockaddr));
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_address.sin_port = htons(SERVER_PORT);
+    server_address.sin_port = htons(port);
 
     server_socket_descriptor = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket_descriptor < 0)
@@ -425,10 +438,12 @@ int main(int argc, char *argv[])
     setsockopt(server_socket_descriptor, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse_addr_val, sizeof(reuse_addr_val));
 
     bind_result = bind(server_socket_descriptor, (struct sockaddr *)&server_address, sizeof(struct sockaddr));
-    if (bind_result < 0)
+    while(bind_result < 0)
     {
         fprintf(stderr, "%s: Blad przy probie dowiazania adresu IP i numeru portu do gniazda.\n", argv[0]);
-        exit(1);
+        port++;
+        server_address.sin_port = htons(port);
+        bind_result = bind(server_socket_descriptor, (struct sockaddr *)&server_address, sizeof(struct sockaddr));
     }
 
     listen_result = listen(server_socket_descriptor, QUEUE_SIZE);

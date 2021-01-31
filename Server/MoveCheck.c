@@ -27,7 +27,7 @@ int check_promotion(int x, int y, int board[8][8], int player1[12], int player2[
         if (y == 7)
         {
             promoted = 1;
-            player1[board[x][y] / 3] = 8;
+            player1[board[x][y] / 3] = 3;
         }
     }
     if (board[x][y] % 3 == 2)
@@ -35,7 +35,7 @@ int check_promotion(int x, int y, int board[8][8], int player1[12], int player2[
         if (y == 0)
         {
             promoted = 1;
-            player2[board[x][y] / 3] = -8;
+            player2[board[x][y] / 3] = -3;
         }
     }
     return promoted;
@@ -69,20 +69,26 @@ int king(int board[8][8], int x1, int y1, int x2, int y2, int side)
                     if (i - 1 == x2) //verify if the move ends right after capturing the hostile pawn
                     {
                         board[i][j] = 0; //remove captured pawn
+                        board[x2][y2] = board[x1][y1];
+                        board[x1][y1] = 0;
                         return 2;
                     }
                     else
                     {
+                        printf("#1\n");
                         return 0; //otherwise the move is incorrect
                     }
                     break;
                 }
                 if (get_square(i, j, board) == side) //if your own pawn if in the path, move is incorrect
                 {
+                    printf("#2\n");
                     return 0;
                 }
                 j--;
             }
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = 0;
             return 1;
         }
         else
@@ -95,20 +101,26 @@ int king(int board[8][8], int x1, int y1, int x2, int y2, int side)
                     if (i + 1 == x2) //verify if the move ends right after capturing the hostile pawn
                     {
                         board[i][j] = 0; //remove captured pawn
+                        board[x2][y2] = board[x1][y1];
+                        board[x1][y1] = 0;
                         return 2;
                     }
                     else
                     {
+                        printf("#3\n");
                         return 0; //otherwise the move is incorrect
                     }
                     break;
                 }
                 if (get_square(i, j, board) == side) //if your own pawn if in the path, move is incorrect
                 {
+                    printf("#4\n");
                     return 0;
                 }
                 j++;
             }
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = 0;
             return 1;
         }
     }
@@ -124,20 +136,26 @@ int king(int board[8][8], int x1, int y1, int x2, int y2, int side)
                     if (i - 1 == x2) //verify if the move ends right after capturing the hostile pawn
                     {
                         board[i][j] = 0; //remove captured pawn
+                        board[x2][y2] = board[x1][y1];
+                        board[x1][y1] = 0;
                         return 2;
                     }
                     else
                     {
+                        printf("#5\n");
                         return 0; //otherwise the move is incorrect
                     }
                     break;
                 }
                 if (get_square(i, j, board) == side)
                 {
+                    printf("#6\n");
                     return 0; //if your own pawn if in the path, move is incorrect
                 }
                 j++;
             }
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = 0;
             return 1;
         }
         else
@@ -150,30 +168,37 @@ int king(int board[8][8], int x1, int y1, int x2, int y2, int side)
                     if (i + 1 == x2) //verify if the move ends right after capturing the hostile pawn
                     {
                         board[i][j] = 0; //remove captured pawn
+                        board[x2][y2] = board[x1][y1];
+                        board[x1][y1] = 0;
                         return 2;
                     }
                     else
                     {
+                        printf("#7\n");
                         return 0; //otherwise the move is incorrect
                     }
                     break;
                 }
                 if (get_square(i, j, board) == side)
                 {
+                    printf("#8\n");
                     return 0; //if your own pawn if in the path, move is incorrect
                 }
                 j--;
             }
+            board[x2][y2] = board[x1][y1];
+            board[x1][y1] = 0;
             return 1;
         }
     }
+    printf("#9\n");
     return 0;
 }
 int move_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
 {
     if (side == 1)
     {
-        if (y2 - y1 == 1 && (x2 - x1 == 1 || x2 - y1 == -1))
+        if (y2 - y1 == 1 && (x2 - x1 == 1 || x2 - x1 == -1))
         {
             board[x2][y2] = board[x1][y1];
             board[x1][y1] = 0;
@@ -181,12 +206,13 @@ int move_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
         }
         else
         {
+            printf("#10\n");
             return 0;
         }
     }
     else
     {
-        if (y2 - y1 == -1 && (x2 - x1 == 1 || x2 - y1 == -1))
+        if (y2 - y1 == -1 && (x2 - x1 == 1 || x2 - x1 == -1))
         {
             board[x2][y2] = board[x1][y1];
             board[x1][y1] = 0;
@@ -194,19 +220,22 @@ int move_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
         }
         else
         {
+            printf("#11\n");
             return 0;
         }
     }
 }
 int move(int board[8][8], int player1[12], int player2[12], int x1, int y1, int x2, int y2, int side)
-{
+{    
     if (get_square(x1, y1, board) != side || get_square(x2, y2, board) != 0)
     {
+        printf("#E2\n");
         return 0; //you can't move a pawn that isn't there or two an occupied square
     }
-    int index = get_index(x1, y1, board);
+    int index = get_index(x1, y1, board)/3;
     if (side == 1)
     {
+        printf("%d\n",player1[index]);
         if (player1[index] == 1)
         {
             return move_pawn(board, x1, y1, x2, y2, side);
@@ -216,6 +245,7 @@ int move(int board[8][8], int player1[12], int player2[12], int x1, int y1, int 
             int res = king(board, x1, y1, x2, y2, side);
             if(res!=1)
             {
+                printf("#E3\n");
                 res = 0;
             }
             return res;
@@ -243,6 +273,7 @@ int jump_pawn(int board[8][8], int x1, int y1, int x2, int y2, int side)
         }
         else
         {
+            printf("#12\n");
             return 0;
         }
     }
@@ -285,9 +316,10 @@ int jump(int board[8][8], int player1[12], int player2[12], int x1, int y1, int 
 {
     if (get_square(x1, y1, board) != side || get_square(x2, y2, board) != 0)
     {
+        printf("#E1\n");
         return 0; //you can't move a pawn that isn't there or two an occupied square
     }
-    int index = get_index(x1, y1, board);
+    int index = get_index(x1, y1, board)/3;
     if (side == 1)
     {
         if (player1[index] == 1)
