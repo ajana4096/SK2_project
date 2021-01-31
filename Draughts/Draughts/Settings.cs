@@ -25,6 +25,9 @@ namespace Draughts
         {
             this.BackgroundImage = Properties.Resources.background;
             this.BackgroundImageLayout = ImageLayout.Stretch;
+            this.textBox1.Text = o.nick;
+            this.textBox2.Text = o.http_name;
+            this.textBox3.Text = o.ip_addres;
             if (o.local == true)
             {
                 this.button1.Text = "Gra lokalnie";
@@ -75,6 +78,9 @@ namespace Draughts
         private void button2_Click(object sender, EventArgs e)
         {
             parent.Show();
+            o.nick = this.textBox1.Text;
+            o.http_name = this.textBox2.Text;
+            o.ip_addres = this.textBox3.Text;
             this.Dispose();
         }
 

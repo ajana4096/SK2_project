@@ -21,10 +21,22 @@ namespace Draughts
         }
         //Start game
         private void button1_Click(object sender, EventArgs e)
-        {
+        {            
             Board b = new Board(this, o);
+            ToggleWait(true);
             this.Hide();
             b.Show();            
+        }
+        public void ToggleWait(bool show)
+        {
+            if(show)
+            {
+                this.label1.Show();
+            }
+            else
+            {
+                this.label1.Hide();
+            }
         }
         //connection to the server
         private void button2_Click(object sender, EventArgs e)

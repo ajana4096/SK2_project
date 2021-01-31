@@ -28,6 +28,21 @@ namespace Draughts
                 this.label1.Text = "Przegrana...\n(Może następnym razem będzie lepiej..?)";
             }
         }
+        public Endgame(Board b, bool victory, string text)
+        {
+            parent = b;
+            InitializeComponent();
+            if (victory)
+            {
+                this.BackColor = Color.Green;
+                this.label1.Text = text;
+            }
+            else
+            {
+                this.BackColor = Color.Red;
+                this.label1.Text = text;
+            }
+        }
 
         private void Endgame_FormClosed(object sender, FormClosedEventArgs e)
         {
